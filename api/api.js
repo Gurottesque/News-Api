@@ -62,7 +62,7 @@ class api {
 
     static async getBreaking( { page = '1', pageSize = '10', region, category} ) {
 
-        //try {
+        try {
             const response = await NEWS_API.get(`event/getBreakingEvents`, {
                 params: {
                 articlesPage: page,
@@ -72,12 +72,20 @@ class api {
             });
 
             let finalData = response.data.breakingEvents.results
-            if (region) {
+            let dataRegion = {}
 
-            }
-            return finalData;
-        //}
-        //catch (error) { return `Error en la petición, codigo ${error.response.status}`; }
+            for (const article in finalData) {
+                 if (finalData[article].location)
+                    {
+                        if (finalData[article].location.country.label.eng == region)
+                        {
+                            dataRegion[article] = finalData[article]
+                        }
+                    }
+                }
+            return region ? dataRegion : finalData;
+        }
+        catch (error) { return `Error en la petición, codigo ${error.response.status}`; }
 
     }
 
